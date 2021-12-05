@@ -532,7 +532,7 @@ def prepare_datasets(
         else:
             dataset_class = ImageFolder
 
-        train_dataset = dataset_with_index(dataset_class)(train_dir, transform)
+        train_dataset = dataset_class(train_dir, transform)
 
     return train_dataset
 

@@ -174,10 +174,9 @@ def main():
 
     trainer = Trainer.from_argparse_args(
         args,
-        logger=wandb_logger if args.wandb else None,
+        logger=wandb_logger if args.wandb else True,
         callbacks=callbacks,
         plugins=DDPPlugin(find_unused_parameters=True) if args.accelerator == "ddp" else None,
-        enable_checkpointing=False,
     )
 
     if args.dali:

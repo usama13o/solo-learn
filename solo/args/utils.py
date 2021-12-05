@@ -80,6 +80,8 @@ def additional_setup_pretrain(args: Namespace):
             args.max_scale,
         ]
     )
+
+    # args.num_crops_per_aug = [1,1]
     assert len(args.num_crops_per_aug) == unique_augs
 
     # assert that either all unique augmentation pipelines have a unique

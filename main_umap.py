@@ -63,8 +63,8 @@ def main():
     device = "cuda:0"
     model = model.to(device)
 
-    umap.plot(device, model, train_loader, "im100_train_umap.pdf")
-    umap.plot(device, model, val_loader, "im100_val_umap.pdf")
+    umap.plot(device, model, train_loader, f"im100_train_umap_{method_args['method']}.pdf")
+    umap.plot(device, model, val_loader, f"im100_val_umap_{method_args['method']}.pdf")
 
 
 if __name__ == "__main__":

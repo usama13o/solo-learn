@@ -491,7 +491,7 @@ class BaseMethod(pl.LightningModule):
             Dict[str, Any]: dict with the classification loss, features and logits.
         """
 
-        _, X, targets = batch
+        X, targets = batch
 
         X = [X] if isinstance(X, torch.Tensor) else X
 
@@ -751,7 +751,7 @@ class BaseMomentumMethod(BaseMethod):
 
         outs = super().training_step(batch, batch_idx)
 
-        _, X, targets = batch
+        X, targets = batch
         X = [X] if isinstance(X, torch.Tensor) else X
 
         # remove small crops
