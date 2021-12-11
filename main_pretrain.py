@@ -57,7 +57,7 @@ from solo.utils.pretrain_dataloader import (
 
 
 def main():
-    seed_everything(5)
+    seed_everything(2021)
 
     args = parse_args_pretrain()
 

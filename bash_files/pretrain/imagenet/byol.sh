@@ -1,4 +1,4 @@
-python3 ../../../main_pretrain.py \
+python3 /home/uz1/projects/solo-learn/main_pretrain.py \
     --dataset imagenet \
     --backbone resnet50 \
     --data_dir /datasets \

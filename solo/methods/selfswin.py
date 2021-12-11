@@ -1,3 +1,4 @@
+
 # Copyright 2021 solo-learn development team.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -28,7 +29,7 @@ from solo.methods.base import BaseMethod
 from solo.utils.misc import gather
 
 
-class NNCLR(BaseMethod):
+class SelfSwin(BaseMethod):
     queue: torch.Tensor
 
     def __init__(
@@ -40,7 +41,9 @@ class NNCLR(BaseMethod):
         queue_size: int,
         **kwargs
     ):
-        """Implements NNCLR (https://arxiv.org/abs/2104.14548).
+        """Implements A self supervised version fo the swin transformer 
+        with added queues and labels for semi-supervised self supervised learning 
+        nn is used for accuracy and class loss is used for classifcation los.
 
         Args:
             proj_output_dim (int): number of dimensions of projected features.
@@ -76,14 +79,15 @@ class NNCLR(BaseMethod):
 
         # queue
         self.register_buffer("queue", torch.randn(self.queue_size, proj_output_dim))
-        self.register_buffer("queue_y", -torch.ones(self.queue_size, dtype=torch.long))
+        self.register_buffer("queue_y", torch.tensor([0,1,2], dtype=torch.long).repeat(self.queue_size))
+        self.queue_y = self.queue_y[:self.queue_size]
         self.queue = F.normalize(self.queue, dim=1)
         self.register_buffer("queue_ptr", torch.zeros(1, dtype=torch.long))
 
     @staticmethod
     def add_model_specific_args(parent_parser: argparse.ArgumentParser) -> argparse.ArgumentParser:
-        parent_parser = super(NNCLR, NNCLR).add_model_specific_args(parent_parser)
-        parser = parent_parser.add_argument_group("nnclr")
+        parent_parser = super(SelfSwin, SelfSwin).add_model_specific_args(parent_parser)
+        parser = parent_parser.add_argument_group("selfswin")
 
         # projector
         parser.add_argument("--proj_output_dim", type=int, default=256)
@@ -152,6 +156,49 @@ class NNCLR(BaseMethod):
         idx = (z @ self.queue.T).max(dim=1)[1]
         nn = self.queue[idx]
         return idx, nn
+    def custom_loss(self,z1,targets):
+        
+        features = torch.cat([z1,self.queue],dim=0)
+        device = (torch.device('cuda')
+                  if features.is_cuda
+                  else torch.device('cpu'))
+
+        batch_size = z1.shape[0]
+        labels = torch.cat([targets,self.queue_y],dim=0)
+        labels = labels.contiguous().view(-1, 1)
+        mask = torch.eq(labels, labels.T).float()
+        contrast_count = features.shape[0]
+        contrast_feature = features          
+        anchor_feature = z1
+        anchor_count = 1
+        # compute logits
+        anchor_dot_contrast = torch.div(
+            torch.matmul(anchor_feature, contrast_feature.T),
+            self.temperature)
+        # for numerical stability
+        logits_max, _ = torch.max(anchor_dot_contrast, dim=1, keepdim=True)
+        logits = anchor_dot_contrast - logits_max.detach()
+
+        
+        logits_mask = torch.scatter(
+            torch.ones_like(mask),
+            1,
+            torch.arange(anchor_count * batch_size).view(-1, 1).to(device),
+            0
+        )
+        mask = mask * logits_mask
+
+        # compute log_prob
+        exp_logits = torch.exp(logits) * logits_mask[:logits.shape[0],:]
+        log_prob = logits - torch.log(exp_logits.sum(1, keepdim=True))
+
+        # compute mean of log-likelihood over positive
+        mean_log_prob_pos = (mask[:logits.shape[0],:] * log_prob).sum(1) / mask[:logits.shape[0],:].sum(1)
+
+        # loss
+        loss = - (self.temperature) * mean_log_prob_pos
+        loss = loss.view(anchor_count * batch_size).mean()
+        return loss
 
     def forward(self, X: torch.Tensor, *args, **kwargs) -> Dict[str, Any]:
         """Performs the forward pass of the backbone, the projector and the predictor.
@@ -196,7 +243,7 @@ class NNCLR(BaseMethod):
 
         z1 = F.normalize(z1, dim=-1)
         z2 = F.normalize(z2, dim=-1)
-
+      
         # find nn
         idx1, nn1 = self.find_nn(z1)
         _, nn2 = self.find_nn(z2)
@@ -206,18 +253,23 @@ class NNCLR(BaseMethod):
             nnclr_loss_func(nn1, p2, temperature=self.temperature) / 2
             + nnclr_loss_func(nn2, p1, temperature=self.temperature) / 2
         )
+        custom_loss = (
+            self.custom_loss(z1,targets) /2 
+            + self.custom_loss(z2,targets) /2
+        )
 
         # compute nn accuracy
         b = targets.size(0)
         nn_acc = (targets == self.queue_y[idx1]).sum() / b
 
         # dequeue and enqueue
-        self.dequeue_and_enqueue(z1, targets)
+        self.dequeue_and_enqueue(F.normalize(p2,dim=-1), targets)
 
         metrics = {
             "train_nnclr_loss": nnclr_loss,
             "train_nn_acc": nn_acc,
+            "train_custom_loss":custom_loss,
         }
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
 
-        return nnclr_loss + class_loss
+        return class_loss + custom_loss
