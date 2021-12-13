@@ -3,7 +3,7 @@ python ../../../main_pretrain.py \
     --backbone swin_large\
     --data_dir /data1/uz1/\
     --train_dir peso \
-    --max_epochs 60\
+    --max_epochs 60 \
     --gpus 0,1 \
     --accelerator gpu \
     --strategy ddp \
@@ -26,11 +26,11 @@ python ../../../main_pretrain.py \
     --solarization_prob 0.0 0.2 \
     --num_crops_per_aug 1 1 \
     --num_workers 4 \
-    --name nnclr-400ep-imagenet100 \
+    --name selfswin-60ep-Custom \
     --entity unitn-mhug \
     --project solo-learn \
     --save_checkpoint \
-    --method nnclr \
+    --method selfswinbyol \
     --temperature 0.2 \
     --proj_hidden_dim 2048 \
     --pred_hidden_dim 4096 \

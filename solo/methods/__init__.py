@@ -35,6 +35,7 @@ from solo.methods.vibcreg import VIbCReg
 from solo.methods.vicreg import VICReg
 from solo.methods.wmse import WMSE
 from solo.methods.selfswin import SelfSwin
+from solo.methods.selfswinbyol import SELFSWINBYOL
 
 METHODS = {
     # base classes
@@ -57,10 +58,12 @@ METHODS = {
     "vicreg": VICReg,
     "wmse": WMSE,
     "selfswin": SelfSwin,
+    "selfswinbyol": SELFSWINBYOL,
 }
 __all__ = [
     "BarlowTwins",
     "SelfSwin",
+    "SELFSWINBYOL",
     "BYOL",
     "BaseMethod",
     "DeepClusterV2",
