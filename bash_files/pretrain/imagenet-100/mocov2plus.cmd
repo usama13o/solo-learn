@@ -1,1 +1,37 @@
-python C:\Users\Usama\solo-learn\main_pretrain.py --dataset custom --backbone swin_large --data_dir F:\\Data\\test\\train --train_dir cls2 --max_epochs 400 --gpus 0 --accelerator gpu --precision 16 --optimizer sgd --scheduler cosine --lr 0.3 --classifier_lr 0.3 --weight_decay 1e-4 --batch_size 64 --num_workers 4 --brightness 0.4 --contrast 0.4 --saturation 0.4 --hue 0.1 --num_crops_per_aug 2 --name mocov2plus-400ep --project solo-learn --entity unitn-mhug --save_checkpoint --method mocov2plus --proj_hidden_dim 2048 --queue_size 1024 --temperature 0.2 --base_tau_momentum 0.99 --final_tau_momentum 0.999 --momentum_classifier --resume_from_checkpoint C:\Users\Usama\solo-learn\trained_models\mocov2plus\4\mocov2plus-400ep-4-ep=28.ckpt
+python /home/uz1/projects/solo-learn/main_pretrain.py \
+    --dataset custom\
+    --backbone swin_large\
+    --data_dir /data1/uz1/\
+    --train_dir peso \
+    --max_epochs 60 \
+    --gpus 0,1 \
+    --accelerator gpu \
+    --strategy ddp \
+    --sync_batchnorm \
+    --precision 16 \
+    --optimizer sgd \
+    --lars \
+    --grad_clip_lars \
+    --eta_lars 0.02 \
+    --exclude_bias_n_norm \
+    --scheduler warmup_cosine \
+    --lr 0.4 \
+    --weight_decay 1e-5 \
+    --batch_size 16\
+    --brightness 0.4 \
+    --contrast 0.4 \
+    --saturation 0.2 \
+    --hue 0.1 \
+    --gaussian_prob 1.0 0.1 \
+    --solarization_prob 0.0 0.2 \
+    --num_crops_per_aug 1 1 \
+    --num_workers 4 \
+    --name mocov2plus-60ep-Custom \
+    --entity unitn-mhug \
+    --project solo-learn \
+    --save_checkpoint \
+    --method mocov2plus \
+    --temperature 0.2 \
+    --proj_hidden_dim 2048 \
+    --proj_output_dim 256 \
+    --queue_size 1024

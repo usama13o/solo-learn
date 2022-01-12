@@ -42,6 +42,7 @@ def nnclr_loss_func(nn: torch.Tensor, p: torch.Tensor, temperature: float = 0.1)
 
     n = p.size(0)
     labels = torch.arange(n, device=p.device)
+    #why these labels again?
 
     loss = F.cross_entropy(logits, labels)
     return loss
