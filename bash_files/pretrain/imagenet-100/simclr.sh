@@ -1,9 +1,8 @@
-python3 ../../../main_pretrain.py \
-    --dataset imagenet100 \
-    --backbone resnet18 \
-    --data_dir /datasets \
-    --train_dir imagenet-100/train \
-    --val_dir imagenet-100/val \
+python ../../../main_pretrain.py \
+    --dataset custom\
+    --backbone swin_large\
+    --data_dir /data1/uz1\
+    --train_dir peso \
     --max_epochs 400 \
     --gpus 0,1 \
     --accelerator gpu \
@@ -18,15 +17,14 @@ python3 ../../../main_pretrain.py \
     --scheduler warmup_cosine \
     --lr 0.3 \
     --weight_decay 1e-4 \
-    --batch_size 128 \
+    --batch_size 16 \
     --num_workers 4 \
     --brightness 0.8 \
     --contrast 0.8 \
     --saturation 0.8 \
     --hue 0.2 \
     --num_crops_per_aug 2 \
-    --name simclr-400ep-imagenet100 \
-    --dali \
+    --name simclr-400ep-custom-supervised\
     --entity unitn-mhug \
     --project solo-learn \
     --wandb \
@@ -34,6 +32,7 @@ python3 ../../../main_pretrain.py \
     --method simclr \
     --temperature 0.2 \
     --proj_hidden_dim 2048
+    --supervised
 
 python3 ../../../main_pretrain.py \
     --dataset imagenet100 \

@@ -1,1 +1,0 @@
-python  C:\Users\Usama\solo-learn\main_umap.py --dataset custom  --data_dir F:\\Data\\test\\train --train_dir cls2 --val_dir cls2 --batch_size 16 --num_workers 10  --pretrained_checkpoint_dir C:\Users\Usama\trained_models\nnclr\5

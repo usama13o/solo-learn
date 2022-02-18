@@ -1,0 +1,1 @@
+python  projects/solo-learn/main_umap.py --dataset custom  --data_dir /data1/uz1/ --train_dir peso --val_dir peso --batch_size 16 --num_workers 25  --pretrained_checkpoint_dir /home/uz1/trained_models/simclr/15

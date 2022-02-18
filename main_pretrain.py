@@ -70,7 +70,7 @@ def main():
     if args.dali:
         assert (
             _dali_avaliable
-        ), "Dali is not currently avaiable, please install it first with [dali]."
+        ), "Dali is not currently avaiable, pleast() install it first with [dali]."
         MethodClass = types.new_class(f"Dali{MethodClass.__name__}", (PretrainABC, MethodClass))
 
     model = MethodClass(**args.__dict__)
@@ -104,7 +104,7 @@ def main():
     # normal dataloader for when it is available
     if args.dataset == "custom" and (args.no_labels or args.val_dir is None):
         val_loader = None
-    elif args.dataset in ["imagenet100", "imagenet"] and args.val_dir is None:
+    elif args.dataset in ["imagenet100", "imagenet","wss"] and args.val_dir is None:
         val_loader = None
     else:
         _, val_loader = prepare_data_classification(

@@ -31,7 +31,8 @@ import pytorch_lightning as pl
 import seaborn as sns
 import torch
 import torch.nn as nn
-import umap
+import umap.umap_ as umap
+
 import wandb
 from matplotlib import pyplot as plt
 from pytorch_lightning.callbacks import Callback
