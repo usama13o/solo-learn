@@ -29,7 +29,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data.dataset import Dataset
 from torchvision import transforms
 from torchvision.datasets import STL10, ImageFolder
-from .wss_dataset import wss_dataset
+from .custom_datasets import  svs_h5_dataset, wss_dataset
 
 def dataset_with_index(DatasetClass: Type[Dataset]) -> Type[Dataset]:
     """Factory for datasets that also returns the data index.
@@ -448,6 +448,8 @@ def prepare_transform(dataset: str, **kwargs) -> Any:
         return CustomTransform(**kwargs)
     elif dataset == "wss":
         return CustomTransform(**kwargs) 
+    elif dataset == "svs_h5":
+        return CustomTransform(**kwargs) 
     else:
         raise ValueError(f"{dataset} is not currently supported.")
 
@@ -515,7 +517,8 @@ def prepare_datasets(
         )
     elif dataset == 'wss':
         train_dataset =wss_dataset(data_dir / train_dir, split='all',transform=transform)
-
+    elif dataset == 'svs_h5':
+        train_dataset = svs_h5_dataset(data_dir / train_dir, split='all',transform=transform)
     elif dataset == "stl10":
         train_dataset = dataset_with_index(STL10)(
             data_dir / train_dir,

@@ -85,9 +85,9 @@ def swin_large(window_size=7, **kwargs):
     model_kwargs = dict(
         patch_size=4,
         window_size=window_size,
-        embed_dim=192,
+        embed_dim=128,
         depths=(2, 2, 18, 2),
-        num_heads=(6, 12, 24, 48),
+        num_heads=(4, 8, 16, 32),
         num_classes=0,
         **kwargs,
     )

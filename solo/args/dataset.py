@@ -38,7 +38,7 @@ def dataset_args(parser: ArgumentParser):
         "wss",
     ]
 
-    parser.add_argument("--dataset", choices=SUPPORTED_DATASETS, type=str, required=True)
+    parser.add_argument("--dataset", type=str, required=True)
 
     # dataset path
     parser.add_argument("--data_dir", type=Path, required=True)
